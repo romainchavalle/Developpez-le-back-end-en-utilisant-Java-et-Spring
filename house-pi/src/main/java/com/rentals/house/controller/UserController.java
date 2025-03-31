@@ -1,6 +1,5 @@
 package com.rentals.house.controller;
 
-import com.rentals.house.model.Rental;
 import com.rentals.house.model.User;
 import com.rentals.house.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +13,7 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
 
-  private UserService userService;
+  private final UserService userService;
 
   public UserController(UserService userService) {
     this.userService = userService;
