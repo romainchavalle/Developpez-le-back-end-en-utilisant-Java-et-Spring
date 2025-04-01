@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.rentals.house.model.User;
 import com.rentals.house.repository.UserRepository;
+import com.rentals.house.dto.RegisterRequest;
 
 
 import javax.swing.text.html.Option;
@@ -31,17 +32,20 @@ public class UserService implements UserDetailsService {
   }
 
 
-  public void register(User user){
+  public void register(RegisterRequest request){
     // VERIFIER SI LE USER EXISTE DEJA AVANT DE CREER
-    Optional<User> optionalUser = this.userRepository.findByEmail(user.getEmail());
+    Optional<User> optionalUser = this.userRepository.findByEmail(request.getEmail());
 
     if (optionalUser.isPresent()) {
       throw new RuntimeException("This email is already used");
     }
 
     // CREATION USER + ENCRYPTER MDP
-    String cryptPassword = this.passwordEncoder.encode(user.getPassword());
+    User user = new User();
+    user.setEmail(request.getEmail());
+    String cryptPassword = this.passwordEncoder.encode(request.getPassword());
     user.setPassword(cryptPassword);
+    user.setName(request.getName());
     this.userRepository.save(user);
   }
 
