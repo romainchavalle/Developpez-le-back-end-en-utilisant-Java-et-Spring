@@ -1,7 +1,9 @@
 package com.rentals.house.controller;
 
+import com.rentals.house.dto.UserDto;
 import com.rentals.house.model.User;
 import com.rentals.house.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +22,12 @@ public class UserController {
   }
 
   @GetMapping("/{id}")
-  public Optional<User> getUserById(@PathVariable Long id) {
-    return userService.getUserById(id);
+  public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+    UserDto user = this.userService.getUserById(id);
+    if (user == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(user);
   }
 
 }

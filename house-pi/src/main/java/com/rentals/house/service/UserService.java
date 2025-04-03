@@ -1,5 +1,6 @@
 package com.rentals.house.service;
 
+import com.rentals.house.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,8 +28,9 @@ public class UserService implements UserDetailsService {
   private final BCryptPasswordEncoder passwordEncoder;
 
 
-  public Optional<User> getUserById(Long id) {
-    return userRepository.findById(id);
+  public UserDto getUserById(Long id) {
+    User user = this.userRepository.findById(id).orElse(null);
+    return new UserDto(user.getId(), user.getEmail(), user.getName(), user.getCreatedAt(), user.getUpdatedAt());
   }
 
   public void register(RegisterRequest request){
