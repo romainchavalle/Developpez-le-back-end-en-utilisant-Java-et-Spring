@@ -1,11 +1,9 @@
 package com.rentals.house.model;
 
-import com.rentals.house.model.Rental;
-import com.rentals.house.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -25,7 +23,10 @@ public class Message {
   private User user;
 
   private String message;
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
+  @Column(name = "created_at", updatable = false)
+  private LocalDate created_at;
+
+  @Column(name = "updated_at")
+  private LocalDate updated_at;
 
 }
