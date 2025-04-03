@@ -31,7 +31,6 @@ public class UserService implements UserDetailsService {
     return userRepository.findById(id);
   }
 
-
   public void register(RegisterRequest request){
     // VERIFIER SI LE USER EXISTE DEJA AVANT DE CREER
     Optional<User> optionalUser = this.userRepository.findByEmail(request.getEmail());
@@ -47,6 +46,17 @@ public class UserService implements UserDetailsService {
     user.setPassword(cryptPassword);
     user.setName(request.getName());
     this.userRepository.save(user);
+  }
+
+  public Optional<User> findByEmail(String email) {
+    return this.userRepository.findByEmail(email);
+  }
+
+  public boolean authenticateUser(String email, String password) {
+    User user = this.userRepository.findByEmail(email)
+      .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+    return this.passwordEncoder.matches(password, user.getPassword());
   }
 
   @Override
