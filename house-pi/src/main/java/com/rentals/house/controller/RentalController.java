@@ -1,10 +1,13 @@
 package com.rentals.house.controller;
 
+import com.rentals.house.dto.RentalRequest;
 import com.rentals.house.model.Rental;
 import com.rentals.house.service.RentalService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -21,22 +24,33 @@ public class RentalController {
 
   // définition des routes et traitement methodes
   @GetMapping
-  public List<Rental> getAllRentals() {
-    return rentalService.getAllRentals();
+  public Map<String, List<Rental>> getAllRentals() {
+    List<Rental> rentals = this.rentalService.getAllRentals();
+    return Map.of("rentals", rentals);
   }
 
   @GetMapping("/{id}")
-  public Optional<Rental> getRentalById(@PathVariable Long id) {
-    return rentalService.getRentalById(id);
+  public ResponseEntity<Rental> getRentalById(@PathVariable Long id) {
+    Optional<Rental> rental = rentalService.getRentalById(id);
+    if (rental.isPresent()) {
+      return ResponseEntity.ok(rental.get());
+    } else {
+      return ResponseEntity.notFound().build();
+    }
   }
 
   @PostMapping
-  public Rental createRental(@RequestBody Rental rental) {
-    return rentalService.saveRental(rental);
+  public ResponseEntity<Map<String, String>> createRental(@RequestBody RentalRequest rental) {
+    if (rentalService.saveRental(rental)==null) {
+      return ResponseEntity.badRequest().body(Map.of("message", "Rental already exists"));
+    }
+    else {
+      return ResponseEntity.ok(Map.of("message", "Rental created!"));
+    }
   }
 
-  @PutMapping("/{id}")
-  public Rental updateRental(@RequestBody Rental rental) {
-    return rentalService.updateRental(rental);
-  }
+//  @PutMapping("/{id}")
+//  public Rental updateRental(@RequestBody Rental rental) {
+//    return rentalService.updateRental(rental);
+//  }
 }
