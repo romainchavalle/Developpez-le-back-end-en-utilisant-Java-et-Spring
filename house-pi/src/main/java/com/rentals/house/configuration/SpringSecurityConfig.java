@@ -1,6 +1,7 @@
 package com.rentals.house.configuration;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +27,10 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-  private String jwtKey = "2Fbn6R7v9UJD6lGdx4YZnpn5ZzBgcYJfXt0ZtJHBoFI=";
+//  private String jwtKey = "2Fbn6R7v9UJD6lGdx4YZnpn5ZzBgcYJfXt0ZtJHBoFI=";
+
+  @Value("${jwt.secret}")
+  private String jwtKey;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -61,7 +65,6 @@ public class SpringSecurityConfig {
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
-
 
   @Bean
   public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {

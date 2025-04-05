@@ -3,6 +3,7 @@ package com.rentals.house.service;
 import com.rentals.house.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +18,7 @@ import com.rentals.house.dto.RegisterRequest;
 import javax.swing.text.html.Option;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -26,14 +28,14 @@ public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder passwordEncoder;
-
+  private final JWTService jwtService;
 
   public UserDto getUserById(Long id) {
     User user = this.userRepository.findById(id).orElse(null);
     return new UserDto(user.getId(), user.getEmail(), user.getName(), user.getCreatedAt(), user.getUpdatedAt());
   }
 
-  public void register(RegisterRequest request){
+  public ResponseEntity<Map<String, String>> register(RegisterRequest request){
     // VERIFIER SI LE USER EXISTE DEJA AVANT DE CREER
     Optional<User> optionalUser = this.userRepository.findByEmail(request.getEmail());
 
@@ -48,17 +50,21 @@ public class UserService implements UserDetailsService {
     user.setPassword(cryptPassword);
     user.setName(request.getName());
     this.userRepository.save(user);
+
+    String jwtToken = this.jwtService.generateToken(request.getEmail());
+
+    return ResponseEntity.ok(Map.of("jwtToken", jwtToken));
   }
 
-  public Optional<User> findByEmail(String email) {
-    return this.userRepository.findByEmail(email);
-  }
+  public Optional<String> login(String email, String password) {
+    User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-  public boolean authenticateUser(String email, String password) {
-    User user = this.userRepository.findByEmail(email)
-      .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    if (!this.passwordEncoder.matches(password, user.getPassword())){
+      return Optional.empty();
+    };
 
-    return this.passwordEncoder.matches(password, user.getPassword());
+    String jwtToken = jwtService.generateToken(user.getEmail());
+    return Optional.of(jwtToken);
   }
 
   @Override
