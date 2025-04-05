@@ -3,16 +3,20 @@ package com.rentals.house.service;
 import com.rentals.house.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import com.rentals.house.model.User;
 import com.rentals.house.repository.UserRepository;
 import com.rentals.house.dto.RegisterRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import javax.swing.text.html.Option;
@@ -72,5 +76,14 @@ public class UserService implements UserDetailsService {
     return this.userRepository
       .findByEmail(email)
       .orElseThrow(() -> new UsernameNotFoundException("No user found with this email"));
+  }
+
+  public User getConnectedUser() {
+    // To get connected user, we use the subject of the jwt token. It contains the email of the user
+    Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    String email = jwt.getClaim("email");
+    // When user is not found, we throw an exception which will be caught by exception handler
+    return this.userRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
   }
 }

@@ -22,6 +22,7 @@ public class AuthController {
   private final JWTService jwtService;
   private final UserService userService;
 
+
   @PostMapping("/register")
   public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest registerRequest) {
     return this.userService.register(registerRequest);
@@ -37,5 +38,21 @@ public class AuthController {
     }
 
     return ResponseEntity.ok(Map.of("jwtToken", jwtToken.get()));
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<Map<String, Object>> getConnectedUser() {
+    User user = this.userService.getConnectedUser();
+
+    if (user == null) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    return ResponseEntity.ok(Map.of("User", user));
+  }
+
+  @GetMapping("/ping")
+  public ResponseEntity<String> ping() {
+    return ResponseEntity.ok("pong");
   }
 }

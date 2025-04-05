@@ -27,8 +27,6 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-//  private String jwtKey = "2Fbn6R7v9UJD6lGdx4YZnpn5ZzBgcYJfXt0ZtJHBoFI=";
-
   @Value("${jwt.secret}")
   private String jwtKey;
 
