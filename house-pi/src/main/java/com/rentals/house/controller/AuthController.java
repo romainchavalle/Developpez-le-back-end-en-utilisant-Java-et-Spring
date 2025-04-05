@@ -2,13 +2,13 @@ package com.rentals.house.controller;
 
 import com.rentals.house.dto.LoginRequest;
 import com.rentals.house.dto.RegisterRequest;
+import com.rentals.house.dto.UserDto;
 import com.rentals.house.model.User;
 import com.rentals.house.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.rentals.house.service.JWTService;
 
 
 import java.util.Map;
@@ -19,7 +19,6 @@ import java.util.Optional;
 @RequestMapping("/auth")
 public class AuthController {
 
-  private final JWTService jwtService;
   private final UserService userService;
 
 
@@ -42,7 +41,7 @@ public class AuthController {
 
   @GetMapping("/me")
   public ResponseEntity<Map<String, Object>> getConnectedUser() {
-    User user = this.userService.getConnectedUser();
+    UserDto user = this.userService.getConnectedUser();
 
     if (user == null) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

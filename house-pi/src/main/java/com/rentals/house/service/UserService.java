@@ -78,12 +78,13 @@ public class UserService implements UserDetailsService {
       .orElseThrow(() -> new UsernameNotFoundException("No user found with this email"));
   }
 
-  public User getConnectedUser() {
+  public UserDto getConnectedUser() {
     // To get connected user, we use the subject of the jwt token. It contains the email of the user
     Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     String email = jwt.getClaim("email");
     // When user is not found, we throw an exception which will be caught by exception handler
-    return this.userRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+    Long userId = this.userRepository.findByEmail(email).get().getId();
+    return getUserById(userId);
   }
 }
