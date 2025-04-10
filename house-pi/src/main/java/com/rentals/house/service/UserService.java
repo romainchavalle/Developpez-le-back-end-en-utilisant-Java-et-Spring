@@ -20,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,8 @@ public class UserService implements UserDetailsService {
     String cryptPassword = this.passwordEncoder.encode(request.getPassword());
     user.setPassword(cryptPassword);
     user.setName(request.getName());
+    user.setCreatedAt(LocalDateTime.now());
+    user.setUpdatedAt(LocalDateTime.now());
     this.userRepository.save(user);
 
     String jwtToken = this.jwtService.generateToken(request.getEmail());
