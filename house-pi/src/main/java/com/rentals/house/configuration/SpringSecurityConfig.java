@@ -36,7 +36,7 @@ public class SpringSecurityConfig {
       .csrf(csrf -> csrf.disable())
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/auth/login", "/auth/register").permitAll()
+        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
         .anyRequest().authenticated()
       )
       .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
