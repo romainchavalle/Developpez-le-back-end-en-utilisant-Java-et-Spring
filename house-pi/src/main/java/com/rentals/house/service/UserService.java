@@ -83,7 +83,6 @@ public class UserService implements UserDetailsService {
     Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     String email = jwt.getClaim("email");
-    // When user is not found, we throw an exception which will be caught by exception handler
     Long userId = this.userRepository.findByEmail(email).get().getId();
     return getUserById(userId);
   }

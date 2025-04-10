@@ -3,8 +3,10 @@ package com.rentals.house.controller;
 import com.rentals.house.dto.RentalRequest;
 import com.rentals.house.model.Rental;
 import com.rentals.house.service.RentalService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -39,9 +41,10 @@ public class RentalController {
     }
   }
 
-  @PostMapping
-  public ResponseEntity<Map<String, String>> createRental(@RequestBody RentalRequest rental) {
-    if (rentalService.saveRental(rental)==null) {
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Map<String, String>> createRental(@RequestPart("rentalRequest") RentalRequest rentalRequest,
+                                                          @RequestPart("image") MultipartFile image) {
+    if (rentalService.saveRental(rentalRequest, image)==null) {
       return ResponseEntity.badRequest().body(Map.of("message", "Rental already exists"));
     }
     else {
