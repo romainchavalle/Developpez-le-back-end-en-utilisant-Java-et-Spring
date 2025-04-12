@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
 
     String jwtToken = this.jwtService.generateToken(request.getEmail());
 
-    return ResponseEntity.ok(Map.of("jwtToken", jwtToken));
+    return ResponseEntity.ok(Map.of("token", jwtToken));
   }
 
   public Optional<String> login(String email, String password) {

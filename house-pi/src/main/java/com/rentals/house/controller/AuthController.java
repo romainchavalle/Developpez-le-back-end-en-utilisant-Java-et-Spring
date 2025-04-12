@@ -36,18 +36,18 @@ public class AuthController {
         .body(Map.of("message", "Invalid email or password"));
     }
 
-    return ResponseEntity.ok(Map.of("jwtToken", jwtToken.get()));
+    return ResponseEntity.ok(Map.of("token", jwtToken.get()));
   }
 
   @GetMapping("/me")
-  public ResponseEntity<Map<String, Object>> getConnectedUser() {
+  public ResponseEntity<UserDto> getConnectedUser() {
     UserDto user = this.userService.getConnectedUser();
 
     if (user == null) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    return ResponseEntity.ok(Map.of("User", user));
+    return ResponseEntity.ok(user);
   }
 
   @GetMapping("/ping")

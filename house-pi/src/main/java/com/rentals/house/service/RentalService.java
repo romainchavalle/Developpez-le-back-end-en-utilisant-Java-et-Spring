@@ -1,6 +1,7 @@
 package com.rentals.house.service;
 
 import com.rentals.house.dto.RentalRequest;
+import com.rentals.house.dto.UserDto;
 import com.rentals.house.model.Rental;
 import com.rentals.house.model.User;
 import com.rentals.house.repository.RentalRepository;
@@ -8,6 +9,7 @@ import com.rentals.house.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,13 +20,13 @@ public class RentalService {
   // déclaration objet
   private final RentalRepository rentalRepository;
   private final UserRepository userRepository;
-  private final FileStorageService fileStorageService;
+  private final UserService userService;
 
   // contructeur (peut-être remplacé par autowired)
-  public RentalService(RentalRepository rentalRepository, UserRepository userRepository,FileStorageService fileStorageService) {
+  public RentalService(RentalRepository rentalRepository, UserRepository userRepository,UserService userService) {
     this.userRepository = userRepository;
     this.rentalRepository = rentalRepository;
-    this.fileStorageService = fileStorageService;
+    this.userService = userService;
   }
 
   // Méthodes (ces methods existent grâce à JPA dans le repo)
@@ -36,23 +38,23 @@ public class RentalService {
     return rentalRepository.findById(id);
   }
 
-  public Rental saveRental(RentalRequest rentalRequest, MultipartFile image) {
-    User owner = this.userRepository.findById(rentalRequest.getOwnerId())
-      .orElseThrow(() -> new RuntimeException("User not found"));
+  public Rental saveRental(RentalRequest rental) {
 
-    String imageUrl = fileStorageService.storeFile(image);
+    Rental rentalToSave = new Rental();
+    rentalToSave.setName(rental.getName());
+    rentalToSave.setPrice(rental.getPrice());
+    rentalToSave.setDescription(rental.getDescription());
+    rentalToSave.setSurface(rental.getSurface());
 
-    Rental rental = new Rental();
-    rental.setName(rentalRequest.getName());
-    rental.setSurface(rentalRequest.getSurface());
-    rental.setPrice(rentalRequest.getPrice());
-    rental.setPicture(imageUrl);
-    rental.setDescription(rentalRequest.getDescription());
-    rental.setOwner(owner);
-    rental.setCreatedAt(LocalDateTime.now());
-    rental.setUpdatedAt(LocalDateTime.now());
+    rentalToSave.setPicture(rental.getPicture());
+    rentalToSave.setCreatedAt(LocalDate.now());
+    rentalToSave.setUpdatedAt(LocalDate.now());
 
-    return rentalRepository.save(rental);
+    UserDto connectedUser = this.userService.getConnectedUser();
+    Optional<User> owner = userRepository.findById(connectedUser.getId());
+    rentalToSave.setOwner(owner.get());
+
+    return rentalRepository.save(rentalToSave);
   }
 
 
