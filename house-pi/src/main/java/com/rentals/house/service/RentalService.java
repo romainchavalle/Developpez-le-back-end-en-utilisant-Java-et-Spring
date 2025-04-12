@@ -34,8 +34,24 @@ public class RentalService {
     return rentalRepository.findAll();
   }
 
-  public Optional<Rental> getRentalById(Long id) {
-    return rentalRepository.findById(id);
+  public Optional<RentalRequest> getRentalById(Long id) {
+    Optional<Rental> rentalOptional = rentalRepository.findById(id);
+    if (rentalOptional.isPresent()) {
+      Rental rental = rentalOptional.get();
+      RentalRequest rentalRequest = new RentalRequest();
+
+      rentalRequest.setName(rental.getName());
+      rentalRequest.setDescription(rental.getDescription());
+      rentalRequest.setPrice(rental.getPrice());
+      rentalRequest.setOwnerId(rental.getOwner().getId());
+      rentalRequest.setSurface(rental.getSurface());
+      rentalRequest.setPicture("/api/pictures/" + rental.getPicture());
+
+      return Optional.of(rentalRequest);
+    } else {
+      return Optional.empty();
+    }
+
   }
 
   public Rental saveRental(RentalRequest rental) {

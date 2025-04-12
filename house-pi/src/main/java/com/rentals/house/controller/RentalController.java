@@ -35,8 +35,8 @@ public class RentalController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Rental> getRentalById(@PathVariable Long id) {
-    Optional<Rental> rental = rentalService.getRentalById(id);
+  public ResponseEntity<RentalRequest> getRentalById(@PathVariable Long id) {
+    Optional<RentalRequest> rental = rentalService.getRentalById(id);
     if (rental.isPresent()) {
       return ResponseEntity.ok(rental.get());
     } else {
