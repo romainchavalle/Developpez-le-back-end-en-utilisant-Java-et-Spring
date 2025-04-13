@@ -1,15 +1,12 @@
 package com.rentals.house.controller;
 
 import com.rentals.house.dto.UserDto;
-import com.rentals.house.model.User;
 import com.rentals.house.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user")

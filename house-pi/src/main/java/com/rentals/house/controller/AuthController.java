@@ -3,13 +3,11 @@ package com.rentals.house.controller;
 import com.rentals.house.dto.LoginRequest;
 import com.rentals.house.dto.RegisterRequest;
 import com.rentals.house.dto.UserDto;
-import com.rentals.house.model.User;
 import com.rentals.house.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,12 +19,13 @@ public class AuthController {
 
   private final UserService userService;
 
-
+  // CREATE A NEW ACCOUNT ON THE APP
   @PostMapping("/register")
   public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest registerRequest) {
     return this.userService.register(registerRequest);
   }
 
+  // LOGIN FROM EXISTING ACCOUNT (EMAIL + PASSWORD)
   @PostMapping("/login")
   public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
     Optional<String> jwtToken = this.userService.login(loginRequest.getEmail(), loginRequest.getPassword());
@@ -39,6 +38,7 @@ public class AuthController {
     return ResponseEntity.ok(Map.of("token", jwtToken.get()));
   }
 
+  // GET INFOS FROM THE CURRENT USER
   @GetMapping("/me")
   public ResponseEntity<UserDto> getConnectedUser() {
     UserDto user = this.userService.getConnectedUser();
@@ -48,10 +48,5 @@ public class AuthController {
     }
 
     return ResponseEntity.ok(user);
-  }
-
-  @GetMapping("/ping")
-  public ResponseEntity<String> ping() {
-    return ResponseEntity.ok("pong");
   }
 }

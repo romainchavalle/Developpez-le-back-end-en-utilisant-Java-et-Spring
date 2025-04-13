@@ -1,13 +1,11 @@
 package com.rentals.house.controller;
 
 import com.rentals.house.dto.RentalRequest;
-import com.rentals.house.model.Rental;
 import com.rentals.house.service.FileStorageService;
 import com.rentals.house.service.RentalService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -18,23 +16,22 @@ import java.util.Optional;
 @RequestMapping("/api/rentals")
 public class RentalController {
 
-  // déclaration objet
   private final RentalService rentalService;
   private final FileStorageService fileStorageService;
 
-  // contructeur (peut-être remplacé par autowired)
   public RentalController(RentalService rentalService, FileStorageService fileStorageService) {
     this.rentalService = rentalService;
     this.fileStorageService = fileStorageService;
   }
 
-  // définition des routes et traitement methodes
+  // DISPLAY ALL RENTALS
   @GetMapping
   public Map<String, List<RentalRequest>> getAllRentals() {
     List<RentalRequest> rentalRequests = this.rentalService.getAllRentals();
     return Map.of("rentals", rentalRequests);
   }
 
+  // DISPLAY 1 SPECIFIC RENTAL
   @GetMapping("/{id}")
   public ResponseEntity<RentalRequest> getRentalById(@PathVariable Long id) {
     Optional<RentalRequest> rental = rentalService.getRentalById(id);
@@ -45,6 +42,7 @@ public class RentalController {
     }
   }
 
+  // CREATE A NEW RENTAL
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Map<String, String>> createRental( @RequestParam("name") String name,
                                                            @RequestParam("surface") Double surface,
@@ -52,8 +50,10 @@ public class RentalController {
                                                            @RequestParam("description") String description,
                                                            @RequestParam("picture") MultipartFile picture) {
 
+    // Store the file in the 'picture' directory and return the url to call to access to that file
     String imageUrl = fileStorageService.storeFile(picture);
 
+    // Mapping DTO
     RentalRequest rental = new RentalRequest();
     rental.setName(name);
     rental.setSurface(surface);
@@ -69,18 +69,21 @@ public class RentalController {
     }
   }
 
+  // UPDATE EXISTING RENTAL
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Map<String, String>> updateRental(@PathVariable Long id,
                                                           @RequestParam("name") String name,
                                                           @RequestParam("surface") Double surface,
                                                           @RequestParam("price") Double price,
                                                           @RequestParam("description") String description) {
+
     Optional<RentalRequest> existingRental = rentalService.getRentalById(id);
 
     if (existingRental.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
 
+    // Mapping DTO
     RentalRequest updatedRental = new RentalRequest();
     updatedRental.setId(id);
     updatedRental.setName(name);
@@ -92,5 +95,4 @@ public class RentalController {
 
     return ResponseEntity.ok(Map.of("message", "Rental updated!"));
   }
-
 }

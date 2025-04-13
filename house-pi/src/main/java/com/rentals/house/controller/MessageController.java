@@ -1,7 +1,6 @@
 package com.rentals.house.controller;
 
 import com.rentals.house.dto.MessageRequest;
-import com.rentals.house.model.Message;
 import com.rentals.house.service.MessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +20,7 @@ public class MessageController {
     this.messageService = messageService;
   }
 
+  // POST A MESSAGE FOR A RENTAL
   @PostMapping
   public ResponseEntity<Map<String, String>> saveMessage(@RequestBody MessageRequest message){
     if(this.messageService.saveMessage(message) != null) {
