@@ -25,7 +25,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     try {
       String fileName = file.getOriginalFilename();
 
-      String uploadDirectory = System.getProperty("user.dir") + "/uploads";
+      String uploadDirectory = System.getProperty("user.dir") + "/pictures";
       Path uploadPath = Paths.get(uploadDirectory);
 
       if (!Files.exists(uploadPath)) {
@@ -35,7 +35,7 @@ public class FileStorageServiceImpl implements FileStorageService {
       Path filePath = uploadPath.resolve(fileName); // Combine le chemin du dossier (uploadPath) avec le nom du fichier (fileName).
       Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // copy le fichier dans le dossier correspondant, ecrase celui existant si jamais même infos
 
-      return "/images/" + fileName;
+      return "/" + fileName;
     } catch (IOException ex) {
       throw new RuntimeException("Erreur lors du stockage du fichier: " + file.getOriginalFilename(), ex);
     }

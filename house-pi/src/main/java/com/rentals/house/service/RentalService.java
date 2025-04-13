@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +31,24 @@ public class RentalService {
   }
 
   // Méthodes (ces methods existent grâce à JPA dans le repo)
-  public List<Rental> getAllRentals() {
-    return rentalRepository.findAll();
+  public List<RentalRequest> getAllRentals() {
+    List<Rental> rentals = rentalRepository.findAll();
+    List<RentalRequest> rentalRequests = new ArrayList<>();
+
+    for (Rental rental : rentals) {
+      RentalRequest rentalRequest = new RentalRequest();
+      rentalRequest.setId(rental.getId());
+      rentalRequest.setName(rental.getName());
+      rentalRequest.setSurface(rental.getSurface());
+      rentalRequest.setPrice(rental.getPrice());
+      rentalRequest.setDescription(rental.getDescription());
+      rentalRequest.setOwnerId(rental.getOwner().getId());
+      rentalRequest.setPicture("/api/pictures" + rental.getPicture());
+
+      rentalRequests.add(rentalRequest);
+    }
+
+    return rentalRequests;
   }
 
   public Optional<RentalRequest> getRentalById(Long id) {
@@ -45,7 +62,7 @@ public class RentalService {
       rentalRequest.setPrice(rental.getPrice());
       rentalRequest.setOwnerId(rental.getOwner().getId());
       rentalRequest.setSurface(rental.getSurface());
-      rentalRequest.setPicture("/api/pictures/" + rental.getPicture());
+      rentalRequest.setPicture("/api/pictures" + rental.getPicture());
 
       return Optional.of(rentalRequest);
     } else {

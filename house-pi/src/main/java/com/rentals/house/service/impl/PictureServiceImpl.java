@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 @Service
 public class PictureServiceImpl implements PictureService {
 
-  private final String picturesPath = "/uploads";
+  private final String picturesPath = "pictures";
 
   public byte[] getPicture(String id) {
     File pictureFile = new File(picturesPath, id);

@@ -7,6 +7,7 @@ import com.rentals.house.service.RentalService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -29,9 +30,9 @@ public class RentalController {
 
   // définition des routes et traitement methodes
   @GetMapping
-  public Map<String, List<Rental>> getAllRentals() {
-    List<Rental> rentals = this.rentalService.getAllRentals();
-    return Map.of("rentals", rentals);
+  public Map<String, List<RentalRequest>> getAllRentals() {
+    List<RentalRequest> rentalRequests = this.rentalService.getAllRentals();
+    return Map.of("rentals", rentalRequests);
   }
 
   @GetMapping("/{id}")
