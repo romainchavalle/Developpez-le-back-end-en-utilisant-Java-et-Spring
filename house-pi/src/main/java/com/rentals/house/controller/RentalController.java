@@ -69,8 +69,28 @@ public class RentalController {
     }
   }
 
-//  @PutMapping("/{id}")
-//  public Rental updateRental(@RequestBody Rental rental) {
-//    return rentalService.updateRental(rental);
-//  }
+  @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Map<String, String>> updateRental(@PathVariable Long id,
+                                                          @RequestParam("name") String name,
+                                                          @RequestParam("surface") Double surface,
+                                                          @RequestParam("price") Double price,
+                                                          @RequestParam("description") String description) {
+    Optional<RentalRequest> existingRental = rentalService.getRentalById(id);
+
+    if (existingRental.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    RentalRequest updatedRental = new RentalRequest();
+    updatedRental.setId(id);
+    updatedRental.setName(name);
+    updatedRental.setSurface(surface);
+    updatedRental.setPrice(price);
+    updatedRental.setDescription(description);
+
+    rentalService.updateRental(id, updatedRental);
+
+    return ResponseEntity.ok(Map.of("message", "Rental updated!"));
+  }
+
 }

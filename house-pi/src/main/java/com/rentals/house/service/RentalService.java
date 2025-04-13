@@ -7,10 +7,8 @@ import com.rentals.house.model.User;
 import com.rentals.house.repository.RentalRepository;
 import com.rentals.house.repository.UserRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +40,7 @@ public class RentalService {
       rentalRequest.setSurface(rental.getSurface());
       rentalRequest.setPrice(rental.getPrice());
       rentalRequest.setDescription(rental.getDescription());
-      rentalRequest.setOwnerId(rental.getOwner().getId());
+      rentalRequest.setOwner_id(rental.getOwner().getId());
       rentalRequest.setPicture("/api/pictures" + rental.getPicture());
 
       rentalRequests.add(rentalRequest);
@@ -57,12 +55,15 @@ public class RentalService {
       Rental rental = rentalOptional.get();
       RentalRequest rentalRequest = new RentalRequest();
 
+      rentalRequest.setId(rental.getId());
       rentalRequest.setName(rental.getName());
       rentalRequest.setDescription(rental.getDescription());
       rentalRequest.setPrice(rental.getPrice());
-      rentalRequest.setOwnerId(rental.getOwner().getId());
+      rentalRequest.setOwner_id(rental.getOwner().getId());
       rentalRequest.setSurface(rental.getSurface());
       rentalRequest.setPicture("/api/pictures" + rental.getPicture());
+      rentalRequest.setUpdated_at(rental.getUpdatedAt());
+      rentalRequest.setCreated_at(rental.getCreatedAt());
 
       return Optional.of(rentalRequest);
     } else {
@@ -92,8 +93,23 @@ public class RentalService {
 
 
 
-//  public Rental updateRental(Rental rental){
-//    return rentalRepository.save(rental);
-//  }
+  public void updateRental(Long id, RentalRequest rental) {
+    Optional<Rental> rentalOptional = rentalRepository.findById(id);
+
+    if (rentalOptional.isEmpty()) {
+      throw new IllegalArgumentException("Rental not found");
+    }
+
+    Rental rentalToUpdate = rentalOptional.get();
+
+    rentalToUpdate.setName(rental.getName());
+    rentalToUpdate.setSurface(rental.getSurface());
+    rentalToUpdate.setPrice(rental.getPrice());
+    rentalToUpdate.setDescription(rental.getDescription());
+    rentalToUpdate.setUpdatedAt(LocalDate.now());
+
+    rentalRepository.save(rentalToUpdate);
+  }
+
 
 }

@@ -1,6 +1,7 @@
 package com.rentals.house.dto;
 
 import lombok.Data;
+import java.time.LocalDate;
 
 @Data
 public class RentalRequest {
@@ -10,5 +11,7 @@ public class RentalRequest {
   private Double price;
   private String picture;
   private String description;
-  private Long ownerId;
+  private Long owner_id;
+  private LocalDate updated_at;
+  private LocalDate created_at;
 }
