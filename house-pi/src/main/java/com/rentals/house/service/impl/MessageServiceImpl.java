@@ -25,19 +25,20 @@ public class MessageServiceImpl implements MessageService {
     this.rentalRepository = rentalRepository;
   }
 
+  // SAVE MESSAGE WHEN CREATED
   public Message saveMessage (MessageRequest message) {
 
+    // Set the different columns of the message
     Message messageToSave = new Message();
     messageToSave.setMessage(message.getMessage());
-
-    User user = this.userRepository.findById(message.getUser_id()).orElseThrow(() -> new RuntimeException("User not found"));
-    Rental rental = this.rentalRepository.findById(message.getRental_id()).orElseThrow(() -> new RuntimeException("Rental not found"));
-
-    messageToSave.setUser(user);
-    messageToSave.setRental(rental);
-
     messageToSave.setCreated_at(LocalDate.now());
     messageToSave.setUpdated_at(LocalDate.now());
+
+    // Set the different foreign keys
+    User user = this.userRepository.findById(message.getUser_id()).orElseThrow(() -> new RuntimeException("User not found"));
+    Rental rental = this.rentalRepository.findById(message.getRental_id()).orElseThrow(() -> new RuntimeException("Rental not found"));
+    messageToSave.setUser(user);
+    messageToSave.setRental(rental);
 
     return this.messageRepository.save(messageToSave);
   }

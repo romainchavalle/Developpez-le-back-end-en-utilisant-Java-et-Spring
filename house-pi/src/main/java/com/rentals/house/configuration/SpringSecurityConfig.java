@@ -22,25 +22,28 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-  // Déclaration de la clé jwt pour encoder le token lors de l'authentification
+  // JWT KEY DECLARATION TO ENCODE JSON WEB TOKEN
   @Value("${jwt.secret}")
   private String jwtKey;
 
-  // Chaine de filtre pour gérer l'authorisation sur les différentes requêtes http
+  // SECURITYFILTERCHAIN TO AUTHORIZE ONLY SOME HTTP REQUESTS AND BLOCK OTHERS IF NO AUTHENTICATION
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http
       .csrf(csrf -> csrf.disable())
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      // authorise or block http requests
       .authorizeHttpRequests(auth -> auth
         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/pictures/**").permitAll()
         .anyRequest().authenticated()
       )
+      // ask for jwt to check authorisation
       .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
       .build();
   }
 
-  // Méthodes d'encodage
+  // ENCODE FUNCTIONS
+
   @Bean
   public BCryptPasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();

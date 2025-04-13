@@ -30,6 +30,7 @@ public class User implements UserDetails {
     return List.of();
   }
 
+  // To authenticate the user, username must be the email
   @Override
   public String getUsername() {
     return this.email;

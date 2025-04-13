@@ -28,10 +28,12 @@ public class RentalServiceImpl implements RentalService {
     this.userService = userService;
   }
 
+  // GIVE ALL THE RENTALS
   public List<RentalRequest> getAllRentals() {
     List<Rental> rentals = rentalRepository.findAll();
     List<RentalRequest> rentalRequests = new ArrayList<>();
 
+    // Map the DTO with the picture url dynamically (picture url is used in front-end to get the picture from stored directory)
     for (Rental rental : rentals) {
       RentalRequest rentalRequest = new RentalRequest();
       rentalRequest.setId(rental.getId());
@@ -48,12 +50,14 @@ public class RentalServiceImpl implements RentalService {
     return rentalRequests;
   }
 
+  // GIVE 1 RENTAL BY ID
   public Optional<RentalRequest> getRentalById(Long id) {
     Optional<Rental> rentalOptional = rentalRepository.findById(id);
     if (rentalOptional.isPresent()) {
       Rental rental = rentalOptional.get();
       RentalRequest rentalRequest = new RentalRequest();
 
+      // Map the DTO with the picture url dynamically (picture url is used in front-end to get the picture from stored directory)
       rentalRequest.setId(rental.getId());
       rentalRequest.setName(rental.getName());
       rentalRequest.setDescription(rental.getDescription());
@@ -65,24 +69,27 @@ public class RentalServiceImpl implements RentalService {
       rentalRequest.setCreated_at(rental.getCreatedAt());
 
       return Optional.of(rentalRequest);
+
     } else {
       return Optional.empty();
     }
 
   }
 
+  // SAVE A RENTAL
   public Rental saveRental(RentalRequest rental) {
 
+    // Map the rental with the data received by the DTO RentalRequest
     Rental rentalToSave = new Rental();
     rentalToSave.setName(rental.getName());
     rentalToSave.setPrice(rental.getPrice());
     rentalToSave.setDescription(rental.getDescription());
     rentalToSave.setSurface(rental.getSurface());
-
     rentalToSave.setPicture(rental.getPicture());
     rentalToSave.setCreatedAt(LocalDate.now());
     rentalToSave.setUpdatedAt(LocalDate.now());
 
+    // As the connectedUser is creating the rental, it corresponds to the owner of the rental
     UserDto connectedUser = this.userService.getConnectedUser();
     Optional<User> owner = userRepository.findById(connectedUser.getId());
     rentalToSave.setOwner(owner.get());
@@ -90,6 +97,7 @@ public class RentalServiceImpl implements RentalService {
     return rentalRepository.save(rentalToSave);
   }
 
+  // UPDATE A RENTAL BY ID
   public void updateRental(Long id, RentalRequest rental) {
     Optional<Rental> rentalOptional = rentalRepository.findById(id);
 
@@ -99,6 +107,7 @@ public class RentalServiceImpl implements RentalService {
 
     Rental rentalToUpdate = rentalOptional.get();
 
+    // Map the new content to the rentalToUpdate which has been found with id in argument
     rentalToUpdate.setName(rental.getName());
     rentalToUpdate.setSurface(rental.getSurface());
     rentalToUpdate.setPrice(rental.getPrice());

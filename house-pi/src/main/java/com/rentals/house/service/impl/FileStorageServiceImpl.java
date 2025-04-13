@@ -15,11 +15,12 @@ public class FileStorageServiceImpl implements FileStorageService {
   // STORE FILES IN THE PICTURES DIRECTORY
   public String storeFile(MultipartFile file) {
     if (file.isEmpty()) {
-      throw new RuntimeException("Le fichier est vide.");
+      throw new RuntimeException("File is empty.");
     }
     try {
       String fileName = file.getOriginalFilename();
 
+      // find the directory "pictures" or create it
       String uploadDirectory = System.getProperty("user.dir") + "/pictures";
       Path uploadPath = Paths.get(uploadDirectory);
 
@@ -27,12 +28,14 @@ public class FileStorageServiceImpl implements FileStorageService {
         Files.createDirectories(uploadPath);
       }
 
-      Path filePath = uploadPath.resolve(fileName); // Combine le chemin du dossier (uploadPath) avec le nom du fichier (fileName).
-      Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // copy le fichier dans le dossier correspondant, ecrase celui existant si jamais même infos
+      // Combine uploadPath and fileName then store the file
+      Path filePath = uploadPath.resolve(fileName);
+      Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+      // return the file name -> it will be used to create the url used to get the picture (url is stored in database)
       return "/" + fileName;
     } catch (IOException ex) {
-      throw new RuntimeException("Erreur lors du stockage du fichier: " + file.getOriginalFilename(), ex);
+      throw new RuntimeException("Storage error in : " + file.getOriginalFilename(), ex);
     }
   }
 }

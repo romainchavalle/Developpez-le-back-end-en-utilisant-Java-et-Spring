@@ -22,12 +22,14 @@ public class AuthController {
   // CREATE A NEW ACCOUNT ON THE APP
   @PostMapping("/register")
   public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest registerRequest) {
+    // This function create a new user et return the jwt token
     return this.userService.register(registerRequest);
   }
 
   // LOGIN FROM EXISTING ACCOUNT (EMAIL + PASSWORD)
   @PostMapping("/login")
   public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
+    // This function check the different credentials and return the jwt token
     Optional<String> jwtToken = this.userService.login(loginRequest.getEmail(), loginRequest.getPassword());
 
     if (jwtToken.isEmpty()) {

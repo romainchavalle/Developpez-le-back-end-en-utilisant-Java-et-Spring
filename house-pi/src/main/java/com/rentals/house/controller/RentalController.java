@@ -53,7 +53,7 @@ public class RentalController {
     // Store the file in the 'picture' directory and return the url to call to access to that file
     String imageUrl = fileStorageService.storeFile(picture);
 
-    // Mapping DTO
+    // Mapping DTO with the differents parameters from the form
     RentalRequest rental = new RentalRequest();
     rental.setName(name);
     rental.setSurface(surface);
@@ -62,7 +62,7 @@ public class RentalController {
     rental.setPicture(imageUrl);
 
     if (rentalService.saveRental(rental)==null) {
-      return ResponseEntity.badRequest().body(Map.of("message", "Rental already exists"));
+      return ResponseEntity.badRequest().body(Map.of("message", "Rental not created"));
     }
     else {
       return ResponseEntity.ok(Map.of("message", "Rental created!"));
@@ -77,13 +77,8 @@ public class RentalController {
                                                           @RequestParam("price") Double price,
                                                           @RequestParam("description") String description) {
 
-    Optional<RentalRequest> existingRental = rentalService.getRentalById(id);
 
-    if (existingRental.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-
-    // Mapping DTO
+    // Mapping DTO with the differents parameters from the form
     RentalRequest updatedRental = new RentalRequest();
     updatedRental.setId(id);
     updatedRental.setName(name);

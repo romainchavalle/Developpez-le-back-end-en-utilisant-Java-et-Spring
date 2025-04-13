@@ -12,7 +12,7 @@ public class PictureController {
 
   private final PictureService pictureService;
 
-  // GET THE PICTURE TO DISPLAY WITH THE ASSOCIATE RENTAL
+  // GET THE PICTURE TO DISPLAY WITH THE ASSOCIATE RENTAL, ID == File's name
   @GetMapping(value = "/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
   public @ResponseBody byte[] getPicture(@PathVariable String id) {
     return pictureService.getPicture(id);

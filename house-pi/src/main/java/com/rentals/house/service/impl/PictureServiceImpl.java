@@ -10,13 +10,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 
 @Service
 public class PictureServiceImpl implements PictureService {
 
+  // Directory to get the pictures
   private final String picturesPath = "pictures";
 
+  // Function to get the picture by id
   public byte[] getPicture(String id) {
     File pictureFile = new File(picturesPath, id);
 
