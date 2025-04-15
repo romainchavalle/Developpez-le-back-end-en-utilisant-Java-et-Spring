@@ -2,12 +2,14 @@ package com.rentals.house.service.impl;
 
 import com.rentals.house.service.FileStorageService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
@@ -18,7 +20,8 @@ public class FileStorageServiceImpl implements FileStorageService {
       throw new RuntimeException("File is empty.");
     }
     try {
-      String fileName = file.getOriginalFilename();
+      // Create a unique file name for each file input
+      String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
 
       // find the directory "pictures" or create it
       String uploadDirectory = System.getProperty("user.dir") + "/pictures";
