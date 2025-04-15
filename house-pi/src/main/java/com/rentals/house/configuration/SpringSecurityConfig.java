@@ -34,7 +34,13 @@ public class SpringSecurityConfig {
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       // authorise or block http requests
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/pictures/**").permitAll()
+        .requestMatchers(
+          "/api/auth/login",
+          "/api/auth/register",
+          "/swagger-ui.html",
+          "/swagger-ui/**",
+          "/v3/api-docs/**",
+          "/api/pictures/**").permitAll()
         .anyRequest().authenticated()
       )
       // ask for jwt to check authorisation
