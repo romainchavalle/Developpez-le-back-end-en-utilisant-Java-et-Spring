@@ -1,9 +1,8 @@
 package com.rentals.house.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
+import java.time.Instant;
 
 @Data
 public class RentalResponse {
@@ -14,6 +13,10 @@ public class RentalResponse {
   private String picture;
   private String description;
   private Long owner_id;
-  private LocalDate updated_at;
-  private LocalDate created_at;
+
+  @JsonProperty("created_at")
+  Instant createdAt;
+
+  @JsonProperty("updated_at")
+  Instant updatedAt;
 }

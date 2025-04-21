@@ -3,8 +3,6 @@ package com.rentals.house.dto;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-
 @Data
 public class RentalRequest {
   private Long id;
@@ -14,6 +12,4 @@ public class RentalRequest {
   private MultipartFile picture;
   private String description;
   private Long owner_id;
-  private LocalDate updated_at;
-  private LocalDate created_at;
 }

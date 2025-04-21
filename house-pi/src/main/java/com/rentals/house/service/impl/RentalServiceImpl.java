@@ -10,10 +10,9 @@ import com.rentals.house.repository.UserRepository;
 import com.rentals.house.service.FileStorageService;
 import com.rentals.house.service.RentalService;
 import com.rentals.house.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +24,14 @@ public class RentalServiceImpl implements RentalService {
   private final RentalRepository rentalRepository;
   private final UserRepository userRepository;
   private final UserService userService;
+  private final ModelMapper modelMapper;
 
-  public RentalServiceImpl(RentalRepository rentalRepository, UserRepository userRepository,UserService userService, FileStorageService fileStorageService) {
+  public RentalServiceImpl(RentalRepository rentalRepository, UserRepository userRepository,UserService userService, FileStorageService fileStorageService,ModelMapper modelMapper) {
     this.userRepository = userRepository;
     this.rentalRepository = rentalRepository;
     this.userService = userService;
     this.fileStorageService = fileStorageService;
+    this.modelMapper = modelMapper;
   }
 
   // GIVE ALL THE RENTALS
@@ -40,12 +41,7 @@ public class RentalServiceImpl implements RentalService {
 
     // Map the DTO with the picture url dynamically (picture url is used in front-end to get the picture from stored directory)
     for (Rental rental : rentals) {
-      RentalResponse rentalResponse = new RentalResponse();
-      rentalResponse.setId(rental.getId());
-      rentalResponse.setName(rental.getName());
-      rentalResponse.setSurface(rental.getSurface());
-      rentalResponse.setPrice(rental.getPrice());
-      rentalResponse.setDescription(rental.getDescription());
+      RentalResponse rentalResponse = modelMapper.map(rental, RentalResponse.class);
       rentalResponse.setOwner_id(rental.getOwner().getId());
       rentalResponse.setPicture("/api/pictures" + rental.getPicture());
 
@@ -60,18 +56,11 @@ public class RentalServiceImpl implements RentalService {
     Optional<Rental> rentalOptional = rentalRepository.findById(id);
     if (rentalOptional.isPresent()) {
       Rental rental = rentalOptional.get();
-      RentalResponse rentalResponse = new RentalResponse();
 
       // Map the DTO with the picture url dynamically (picture url is used in front-end to get the picture from stored directory)
-      rentalResponse.setId(rental.getId());
-      rentalResponse.setName(rental.getName());
-      rentalResponse.setDescription(rental.getDescription());
-      rentalResponse.setPrice(rental.getPrice());
+      RentalResponse rentalResponse = modelMapper.map(rental, RentalResponse.class);
       rentalResponse.setOwner_id(rental.getOwner().getId());
-      rentalResponse.setSurface(rental.getSurface());
       rentalResponse.setPicture("/api/pictures" + rental.getPicture());
-      rentalResponse.setUpdated_at(rental.getUpdatedAt());
-      rentalResponse.setCreated_at(rental.getCreatedAt());
 
       return Optional.of(rentalResponse);
 
@@ -88,14 +77,8 @@ public class RentalServiceImpl implements RentalService {
     String imageUrl = fileStorageService.storeFile(rental.getPicture());
 
     // Map the rental with the data received by the DTO RentalRequest
-    Rental rentalToSave = new Rental();
-    rentalToSave.setName(rental.getName());
-    rentalToSave.setPrice(rental.getPrice());
-    rentalToSave.setDescription(rental.getDescription());
-    rentalToSave.setSurface(rental.getSurface());
+    Rental rentalToSave = modelMapper.map(rental, Rental.class);
     rentalToSave.setPicture(imageUrl);
-    rentalToSave.setCreatedAt(LocalDate.now());
-    rentalToSave.setUpdatedAt(LocalDate.now());
 
     // As the connectedUser is creating the rental, it corresponds to the owner of the rental
     UserDto connectedUser = this.userService.getConnectedUser();
@@ -116,11 +99,7 @@ public class RentalServiceImpl implements RentalService {
     Rental rentalToUpdate = rentalOptional.get();
 
     // Map the new content to the rentalToUpdate which has been found with id in argument
-    rentalToUpdate.setName(rental.getName());
-    rentalToUpdate.setSurface(rental.getSurface());
-    rentalToUpdate.setPrice(rental.getPrice());
-    rentalToUpdate.setDescription(rental.getDescription());
-    rentalToUpdate.setUpdatedAt(LocalDate.now());
+    modelMapper.map(rental, rentalToUpdate);
 
     rentalRepository.save(rentalToUpdate);
   }
