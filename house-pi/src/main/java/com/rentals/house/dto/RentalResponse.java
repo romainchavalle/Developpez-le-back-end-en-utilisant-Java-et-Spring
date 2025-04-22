@@ -2,16 +2,17 @@ package com.rentals.house.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.Instant;
 
 @Data
-@NoArgsConstructor
-public class UserDto {
-  Long id;
-  String name;
-  String email;
+public class RentalResponse {
+  private Long id;
+  private String name;
+  private Double surface;
+  private Double price;
+  private String picture;
+  private String description;
+  private Long owner_id;
 
   @JsonProperty("created_at")
   Instant createdAt;

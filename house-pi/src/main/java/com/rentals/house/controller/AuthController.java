@@ -24,7 +24,6 @@ public class AuthController {
   private final UserService userService;
 
   // CREATE A NEW ACCOUNT ON THE APP
-  @Hidden
   @PostMapping("/register")
   public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest registerRequest) {
     // This function create a new user et return the jwt token
@@ -32,7 +31,6 @@ public class AuthController {
   }
 
   // LOGIN FROM EXISTING ACCOUNT (EMAIL + PASSWORD)
-  @Hidden
   @PostMapping("/login")
   public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
     // This function check the different credentials and return the jwt token

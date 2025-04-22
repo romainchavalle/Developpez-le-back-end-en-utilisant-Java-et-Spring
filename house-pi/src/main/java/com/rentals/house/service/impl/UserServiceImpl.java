@@ -4,6 +4,7 @@ import com.rentals.house.dto.UserDto;
 import com.rentals.house.service.JWTService;
 import com.rentals.house.service.UserService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,13 +29,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder passwordEncoder;
   private final JWTService jwtService;
+  private final ModelMapper modelMapper;
 
   // FIND A USER BY ID
   public UserDto getUserById(Long id) {
     User user = this.userRepository.findById(id).orElse(null);
 
     // The user is return by a DTO so the password can stay secret (not include in the DTO)
-    return new UserDto(user.getId(), user.getEmail(), user.getName(), user.getCreatedAt(), user.getUpdatedAt());
+    return modelMapper.map(user, UserDto.class);
   }
 
   // REGISTER A NEW USER
@@ -48,11 +50,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // Then we can create a new user with de data given by the DTO RegisterRequest
-    User user = new User();
-    user.setEmail(request.getEmail());
-    user.setName(request.getName());
-    user.setCreatedAt(LocalDateTime.now());
-    user.setUpdatedAt(LocalDateTime.now());
+    User user = modelMapper.map(request, User.class);
 
     // Do not forget the encode the password so it can't be seen from the database
     String cryptPassword = this.passwordEncoder.encode(request.getPassword());

@@ -2,8 +2,10 @@ package com.rentals.house.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 @Data
 @Entity
@@ -23,10 +25,13 @@ public class Message {
   private User user;
 
   private String message;
-  @Column(name = "created_at", updatable = false)
-  private LocalDate created_at;
+
+  @Column(name = "created_at")
+  @CreationTimestamp
+  private Instant createdAt;
 
   @Column(name = "updated_at")
-  private LocalDate updated_at;
+  @UpdateTimestamp
+  private Instant updatedAt;
 
 }

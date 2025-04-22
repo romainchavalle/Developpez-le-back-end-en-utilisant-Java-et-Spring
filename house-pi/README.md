@@ -12,7 +12,7 @@ Ce projet représente la partie backend de l'application **RentalsApp**, une pla
 ## **Lancement du projet**
 
 ### **Prérequis**
-- Java 11 ou supérieur
+- Java 17 ou supérieur
 - Maven
 - Node.js et Angular CLI (version 14 ou ultérieure)
 

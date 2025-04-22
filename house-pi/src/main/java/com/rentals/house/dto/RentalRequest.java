@@ -1,7 +1,7 @@
 package com.rentals.house.dto;
 
 import lombok.Data;
-import java.time.LocalDate;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class RentalRequest {
@@ -9,9 +9,7 @@ public class RentalRequest {
   private String name;
   private Double surface;
   private Double price;
-  private String picture;
+  private MultipartFile picture;
   private String description;
   private Long owner_id;
-  private LocalDate updated_at;
-  private LocalDate created_at;
 }

@@ -10,7 +10,6 @@ import com.rentals.house.repository.RentalRepository;
 import com.rentals.house.repository.UserRepository;
 import com.rentals.house.service.MessageService;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -31,8 +30,6 @@ public class MessageServiceImpl implements MessageService {
     // Set the different columns of the message
     Message messageToSave = new Message();
     messageToSave.setMessage(message.getMessage());
-    messageToSave.setCreated_at(LocalDate.now());
-    messageToSave.setUpdated_at(LocalDate.now());
 
     // Set the different foreign keys
     User user = this.userRepository.findById(message.getUser_id()).orElseThrow(() -> new RuntimeException("User not found"));
