@@ -26,7 +26,7 @@ public class OpenAPIConfig {
       .info(new Info()
         .title("Chatop REST API")
         .version("1.0")
-        .contact(new Contact().name("Lucas Mercier").email( "pro@lucasmercier.com")));
+        .contact(new Contact().name("Romain Chavalle").email( "romain.chavalle@gmail.com")));
   }
 
 }

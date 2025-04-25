@@ -17,14 +17,13 @@ import com.rentals.house.model.User;
 import com.rentals.house.repository.UserRepository;
 import com.rentals.house.dto.RegisterRequest;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
 
 @AllArgsConstructor
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder passwordEncoder;
@@ -78,15 +77,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     // It does match ? -> return the jwt token (allow http request protected to success)
     String jwtToken = jwtService.generateToken(user.getEmail());
     return Optional.of(jwtToken);
-  }
-
-  @Override
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-    // The username used for authentication must be the email
-    return this.userRepository
-      .findByEmail(email)
-      .orElseThrow(() -> new UsernameNotFoundException("No user found with this email"));
   }
 
   // GET THE USER CONNECTED FROM JWT TOKEN
