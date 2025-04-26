@@ -3,6 +3,8 @@ package com.rentals.house.service.impl;
 import com.rentals.house.dto.RentalRequest;
 import com.rentals.house.dto.RentalResponse;
 import com.rentals.house.dto.UserDto;
+import com.rentals.house.exception.EntityNotFoundException;
+import com.rentals.house.exception.EntityNotSavedException;
 import com.rentals.house.model.Rental;
 import com.rentals.house.model.User;
 import com.rentals.house.repository.RentalRepository;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RentalServiceImpl implements RentalService {
@@ -52,55 +53,49 @@ public class RentalServiceImpl implements RentalService {
   }
 
   // GIVE 1 RENTAL BY ID
-  public Optional<RentalResponse> getRentalById(Long id) {
-    Optional<Rental> rentalOptional = rentalRepository.findById(id);
-    if (rentalOptional.isPresent()) {
-      Rental rental = rentalOptional.get();
+  public RentalResponse getRentalById(Long id) {
+    Rental rental = rentalRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Rental not found with this id."));
 
       // Map the DTO with the picture url dynamically (picture url is used in front-end to get the picture from stored directory)
       RentalResponse rentalResponse = modelMapper.map(rental, RentalResponse.class);
       rentalResponse.setOwner_id(rental.getOwner().getId());
       rentalResponse.setPicture("/api/pictures" + rental.getPicture());
 
-      return Optional.of(rentalResponse);
-
-    } else {
-      return Optional.empty();
-    }
-
+      return rentalResponse;
   }
 
   // SAVE A RENTAL
-  public Rental saveRental(RentalRequest rental) {
+  public void saveRental(RentalRequest rental) {
+    try {
+      // Store the file in the 'picture' directory and return the url to call to access to that file
+      String imageUrl = fileStorageService.storeFile(rental.getPicture());
 
-    // Store the file in the 'picture' directory and return the url to call to access to that file
-    String imageUrl = fileStorageService.storeFile(rental.getPicture());
+      // Map the rental with the data received by the DTO RentalRequest
+      Rental rentalToSave = modelMapper.map(rental, Rental.class);
+      rentalToSave.setPicture(imageUrl);
 
-    // Map the rental with the data received by the DTO RentalRequest
-    Rental rentalToSave = modelMapper.map(rental, Rental.class);
-    rentalToSave.setPicture(imageUrl);
+      // As the connectedUser is creating the rental, it corresponds to the owner of the rental
+      UserDto connectedUser = this.userService.getConnectedUser();
+      User owner = userRepository.findById(connectedUser.getId()).orElseThrow(() -> new EntityNotFoundException("Owner not found with this id."));
+      rentalToSave.setOwner(owner);
 
-    // As the connectedUser is creating the rental, it corresponds to the owner of the rental
-    UserDto connectedUser = this.userService.getConnectedUser();
-    Optional<User> owner = userRepository.findById(connectedUser.getId());
-    rentalToSave.setOwner(owner.get());
-
-    return rentalRepository.save(rentalToSave);
+      rentalRepository.save(rentalToSave);
+    } catch (Exception ex) {
+      throw new EntityNotSavedException("Erreur lors de la création du rental");
+    }
   }
 
   // UPDATE A RENTAL BY ID
   public void updateRental(Long id, RentalRequest rental) {
-    Optional<Rental> rentalOptional = rentalRepository.findById(id);
+    try {
+      Rental rentalToUpdate  = rentalRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Owner not found with this id."));
 
-    if (rentalOptional.isEmpty()) {
-      throw new IllegalArgumentException("Rental not found");
+      // Map the new content to the rentalToUpdate which has been found with id in argument
+      modelMapper.map(rental, rentalToUpdate);
+
+      rentalRepository.save(rentalToUpdate);
+    } catch (Exception ex) {
+      throw new EntityNotSavedException("Erreur lors de l'update du rental");
     }
-
-    Rental rentalToUpdate = rentalOptional.get();
-
-    // Map the new content to the rentalToUpdate which has been found with id in argument
-    modelMapper.map(rental, rentalToUpdate);
-
-    rentalRepository.save(rentalToUpdate);
   }
 }

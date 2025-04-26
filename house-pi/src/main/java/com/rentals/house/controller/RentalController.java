@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Tag(name = "Rentals CRUD", description = "This API give you the CRUD of the rentals.")
 @RestController
@@ -35,26 +34,16 @@ public class RentalController {
   // DISPLAY 1 SPECIFIC RENTAL
   @Operation(summary = "Get one specific rental", description = "The rental must be found with id given in parameters.")
   @GetMapping("/{id}")
-  public ResponseEntity<RentalResponse> getRentalById(@PathVariable Long id) {
-    Optional<RentalResponse> rental = rentalService.getRentalById(id);
-    if (rental.isPresent()) {
-      return ResponseEntity.ok(rental.get());
-    } else {
-      return ResponseEntity.notFound().build();
-    }
+  public RentalResponse getRentalById(@PathVariable Long id) {
+    return rentalService.getRentalById(id);
   }
 
   // CREATE A NEW RENTAL
   @Operation(summary = "Create a new rental", description = "The rental will be created from the form's inputs.")
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Map<String, String>> createRental(@ModelAttribute RentalRequest rental) {
-
-    if (rentalService.saveRental(rental)==null) {
-      return ResponseEntity.badRequest().body(Map.of("message", "Rental not created"));
-    }
-    else {
-      return ResponseEntity.ok(Map.of("message", "Rental created!"));
-    }
+    rentalService.saveRental(rental);
+    return ResponseEntity.ok(Map.of("message", "Rental created!"));
   }
 
   // UPDATE EXISTING RENTAL
@@ -64,7 +53,6 @@ public class RentalController {
                                                           @ModelAttribute RentalRequest rental) {
 
     rentalService.updateRental(id, rental);
-
     return ResponseEntity.ok(Map.of("message", "Rental updated!"));
   }
 }

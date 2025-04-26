@@ -19,9 +19,9 @@ public interface RentalService {
 
   public List<RentalResponse> getAllRentals();
 
-  public Optional<RentalResponse> getRentalById(Long id);
+  public RentalResponse getRentalById(Long id);
 
-  public Rental saveRental(RentalRequest rental);
+  public void saveRental(RentalRequest rental);
 
   public void updateRental(Long id, RentalRequest rental);
 
