@@ -11,8 +11,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler({EntityNotFoundException.class})
   public ResponseEntity<Object> EntityNotFoundException(EntityNotFoundException exception) {
-    MessageResponse messageResponse = new MessageResponse();
-    messageResponse.setMessage(exception.getMessage());
+    MessageResponse messageResponse = new MessageResponse(exception.getMessage());
 
     return ResponseEntity
       .status(HttpStatus.NOT_FOUND)
@@ -21,8 +20,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler({EntityNotSavedException.class})
   public ResponseEntity<Object> EntityNotSavedException(EntityNotSavedException exception) {
-    MessageResponse messageResponse = new MessageResponse();
-    messageResponse.setMessage(exception.getMessage());
+    MessageResponse messageResponse = new MessageResponse(exception.getMessage());
 
     return ResponseEntity
       .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -32,8 +30,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler({RuntimeException.class})
   public ResponseEntity<Object> handleRuntimeException(RuntimeException exception) {
-    MessageResponse messageResponse = new MessageResponse();
-    messageResponse.setMessage(exception.getMessage());
+    MessageResponse messageResponse = new MessageResponse(exception.getMessage());
 
     return ResponseEntity
       .status(HttpStatus.INTERNAL_SERVER_ERROR)

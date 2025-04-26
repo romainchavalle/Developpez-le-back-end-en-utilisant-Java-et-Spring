@@ -1,5 +1,6 @@
 package com.rentals.house.controller;
 
+import com.rentals.house.dto.JwtResponse;
 import com.rentals.house.dto.LoginRequest;
 import com.rentals.house.dto.RegisterRequest;
 import com.rentals.house.dto.UserDto;
@@ -9,8 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Tag(name = "Authentication's endpoints", description = "This API give you the different endpoints for connected user")
 @AllArgsConstructor
@@ -22,17 +21,22 @@ public class AuthController {
 
   // CREATE A NEW ACCOUNT ON THE APP
   @PostMapping("/register")
-  public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest registerRequest) {
+  public ResponseEntity<JwtResponse>  register(@RequestBody RegisterRequest registerRequest) {
     // This function create a new user et return the jwt token
-    return this.userService.register(registerRequest);
+    String jwtToken = this.userService.register(registerRequest);
+    JwtResponse jwtResponse = new JwtResponse();
+    jwtResponse.setToken(jwtToken);
+    return ResponseEntity.ok(jwtResponse);
   }
 
   // LOGIN FROM EXISTING ACCOUNT (EMAIL + PASSWORD)
   @PostMapping("/login")
-  public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
+  public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
     // This function check the different credentials and return the jwt token
     String jwtToken = this.userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-    return ResponseEntity.ok(Map.of("token", jwtToken));
+    JwtResponse jwtResponse = new JwtResponse();
+    jwtResponse.setToken(jwtToken);
+    return ResponseEntity.ok(jwtResponse);
   }
 
   // GET INFOS FROM THE CURRENT USER

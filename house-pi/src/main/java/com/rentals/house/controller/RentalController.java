@@ -1,7 +1,9 @@
 package com.rentals.house.controller;
 
+import com.rentals.house.dto.MessageResponse;
 import com.rentals.house.dto.RentalRequest;
 import com.rentals.house.dto.RentalResponse;
+import com.rentals.house.dto.RentalResponseWrapper;
 import com.rentals.house.service.RentalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Tag(name = "Rentals CRUD", description = "This API give you the CRUD of the rentals.")
 @RestController
@@ -26,9 +27,9 @@ public class RentalController {
   // DISPLAY ALL RENTALS
   @Operation(summary = "Get all the rentals", description = "Return a list of all the rentals.")
   @GetMapping
-  public Map<String, List<RentalResponse>> getAllRentals() {
-    List<RentalResponse> rentalResponse = this.rentalService.getAllRentals();
-    return Map.of("rentals", rentalResponse);
+  public RentalResponseWrapper getAllRentals() {
+    List<RentalResponse> rentalResponses = this.rentalService.getAllRentals();
+    return new RentalResponseWrapper(rentalResponses);
   }
 
   // DISPLAY 1 SPECIFIC RENTAL
@@ -41,18 +42,20 @@ public class RentalController {
   // CREATE A NEW RENTAL
   @Operation(summary = "Create a new rental", description = "The rental will be created from the form's inputs.")
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Map<String, String>> createRental(@ModelAttribute RentalRequest rental) {
+  public ResponseEntity<MessageResponse> createRental(@ModelAttribute RentalRequest rental) {
     rentalService.saveRental(rental);
-    return ResponseEntity.ok(Map.of("message", "Rental created!"));
+    MessageResponse messageResponse = new MessageResponse("Rental created!");
+    return ResponseEntity.ok(messageResponse);
   }
 
   // UPDATE EXISTING RENTAL
   @Operation(summary = "Update an existing rental", description = "To update the rental, you need to give it's id in parameters.Then rental will be updated from the form's inputs.")
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Map<String, String>> updateRental(@PathVariable Long id,
+  public ResponseEntity<MessageResponse> updateRental(@PathVariable Long id,
                                                           @ModelAttribute RentalRequest rental) {
 
     rentalService.updateRental(id, rental);
-    return ResponseEntity.ok(Map.of("message", "Rental updated!"));
+    MessageResponse messageResponse = new MessageResponse("Rental updated!");
+    return ResponseEntity.ok(messageResponse);
   }
 }

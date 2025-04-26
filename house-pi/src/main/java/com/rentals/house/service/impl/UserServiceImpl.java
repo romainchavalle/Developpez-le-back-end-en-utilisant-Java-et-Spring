@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
   }
 
   // REGISTER A NEW USER
-  public ResponseEntity<Map<String, String>> register(RegisterRequest request){
+  public String register(RegisterRequest request){
 
     // First, we need to check if the email already exist in database
     Optional<User> optionalUser = this.userRepository.findByEmail(request.getEmail());
@@ -56,9 +56,7 @@ public class UserServiceImpl implements UserService {
     this.userRepository.save(user);
 
     // After user is created, we can return the jwt (allow http request protected to success)
-    String jwtToken = this.jwtService.generateToken(request.getEmail());
-
-    return ResponseEntity.ok(Map.of("token", jwtToken));
+    return this.jwtService.generateToken(request.getEmail());
   }
 
   // LOGIN AN EXISTING USER (WITH EMAIL + PASSWORD)
