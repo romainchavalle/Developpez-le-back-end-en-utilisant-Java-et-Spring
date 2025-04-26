@@ -4,5 +4,5 @@ import com.rentals.house.dto.MessageRequest;
 import com.rentals.house.model.Message;
 
 public interface MessageService {
-  public Message saveMessage (MessageRequest message);
+  public void saveMessage (MessageRequest message);
 }

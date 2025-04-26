@@ -27,11 +27,7 @@ public class MessageController {
   @Operation(summary = "Create a new message", description = "The message will be linked to his user and his rental.")
   @PostMapping
   public ResponseEntity<Map<String, String>> saveMessage(@RequestBody MessageRequest message){
-    if(this.messageService.saveMessage(message) != null) {
-      return ResponseEntity.ok(Map.of("message", "Message send with success"));
-    }
-    else {
-      return ResponseEntity.ok(Map.of("error", "Message not send with success"));
-    }
+    this.messageService.saveMessage(message);
+    return ResponseEntity.ok(Map.of("error", "Message not send with success"));
   }
 }
