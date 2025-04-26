@@ -11,7 +11,7 @@ public interface UserService {
 
   UserDto getUserById(Long id);
   ResponseEntity<Map<String, String>> register(RegisterRequest request);
-  Optional<String> login(String email, String password);
+  String login(String email, String password);
   UserDto getConnectedUser();
 
 }

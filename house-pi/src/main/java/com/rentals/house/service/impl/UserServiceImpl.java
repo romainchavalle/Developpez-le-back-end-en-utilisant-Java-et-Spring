@@ -1,14 +1,13 @@
 package com.rentals.house.service.impl;
 
 import com.rentals.house.dto.UserDto;
+import com.rentals.house.exception.EntityNotFoundException;
 import com.rentals.house.service.JWTService;
 import com.rentals.house.service.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
   // FIND A USER BY ID
   public UserDto getUserById(Long id) {
-    User user = this.userRepository.findById(id).orElse(null);
+    User user = this.userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
     // The user is return by a DTO so the password can stay secret (not include in the DTO)
     return modelMapper.map(user, UserDto.class);
@@ -64,19 +63,18 @@ public class UserServiceImpl implements UserService {
   }
 
   // LOGIN AN EXISTING USER (WITH EMAIL + PASSWORD)
-  public Optional<String> login(String email, String password) {
+  public String login(String email, String password) {
 
     // First, we need to check if the user exist with the email given in argument
-    User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    User user = this.userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
     // Then, we can check if the password in database correspond to the password given by the login form
     if (!this.passwordEncoder.matches(password, user.getPassword())){
-      return Optional.empty();
+      throw new RuntimeException("Wrong password");
     };
 
     // It does match ? -> return the jwt token (allow http request protected to success)
-    String jwtToken = jwtService.generateToken(user.getEmail());
-    return Optional.of(jwtToken);
+    return jwtService.generateToken(user.getEmail());
   }
 
   // GET THE USER CONNECTED FROM JWT TOKEN
@@ -85,7 +83,8 @@ public class UserServiceImpl implements UserService {
     Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     String email = jwt.getClaim("email");
-    Long userId = this.userRepository.findByEmail(email).get().getId();
+    User user =  this.userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found"));
+    Long userId = user.getId();
     return getUserById(userId);
   }
 }

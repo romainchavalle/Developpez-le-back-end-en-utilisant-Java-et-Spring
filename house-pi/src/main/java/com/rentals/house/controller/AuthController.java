@@ -34,14 +34,8 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
     // This function check the different credentials and return the jwt token
-    Optional<String> jwtToken = this.userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-
-    if (jwtToken.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-        .body(Map.of("message", "Invalid email or password"));
-    }
-
-    return ResponseEntity.ok(Map.of("token", jwtToken.get()));
+    String jwtToken = this.userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+    return ResponseEntity.ok(Map.of("token", jwtToken));
   }
 
   // GET INFOS FROM THE CURRENT USER
@@ -49,11 +43,6 @@ public class AuthController {
   @GetMapping("/me")
   public ResponseEntity<UserDto> getConnectedUser() {
     UserDto user = this.userService.getConnectedUser();
-
-    if (user == null) {
-      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }
-
     return ResponseEntity.ok(user);
   }
 }
