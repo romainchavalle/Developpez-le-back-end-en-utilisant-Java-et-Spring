@@ -4,16 +4,13 @@ import com.rentals.house.dto.LoginRequest;
 import com.rentals.house.dto.RegisterRequest;
 import com.rentals.house.dto.UserDto;
 import com.rentals.house.service.UserService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Tag(name = "Authentication's endpoints", description = "This API give you the different endpoints for connected user")
 @AllArgsConstructor
